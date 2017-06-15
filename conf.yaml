@@ -1,0 +1,11 @@
+port: ":8089"
+storage:
+  path: "/file"
+image:
+  maxwidth: 2000
+  maxheight: 2000
+  quality: 100
+thumbnail:
+  maxwidth: 200
+  maxheight: 200
+  quality: 80
