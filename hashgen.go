@@ -15,6 +15,7 @@ func initHashGen() {
 	hg, err := hashids.NewWithData(hd)
 
 	if err != nil {
+		log.Errorf("Cannot create hashids [%s]", err.Error())
 		panic("Cannot create hashids!")
 	}
 
