@@ -1,11 +1,12 @@
 port: ":8089"
-storage:
-  path: "/file"
+salt: "Holly"
 image:
+  path: "/file"
   maxwidth: 2000
   maxheight: 2000
   quality: 100
 thumbnail:
+  path: "/file"
   maxwidth: 200
   maxheight: 200
   quality: 80

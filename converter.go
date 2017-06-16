@@ -3,7 +3,6 @@ package main
 import (
 	"image"
 	"image/jpeg"
-	"io"
 	"os"
 
 	"github.com/disintegration/imaging"
@@ -30,8 +29,7 @@ func resizeImage(sourceImage image.Image, maxWidth, maxHeight int) *image.NRGBA 
 	return imaging.Resize(sourceImage, resizeValue.Width, resizeValue.Height, imaging.Lanczos)
 }
 
-func convertImage(reader io.Reader, output string) {
-	inputImage, _ := imaging.Decode(reader)
+func convertImage(inputImage image.Image, output string) image.Image {
 
 	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight)
 	processImage = imaging.Sharpen(processImage, 0.2)
@@ -41,17 +39,16 @@ func convertImage(reader io.Reader, output string) {
 	outputImage, _ := os.Create(output)
 	defer outputImage.Close()
 
-	//imaging.Save(m, output)
 	jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Image.Quality})
+
+	return processImage
 }
 
-func convertTumbnail(reader io.Reader, output string) {
-	inputImage, _ := imaging.Decode(reader)
+func convertTumbnail(inputImage image.Image, output string) image.Image {
 
 	processImage := imaging.Resize(inputImage, 300, 0, imaging.Lanczos)
 	processImage = imaging.Fill(processImage, 200, 200, imaging.Center, imaging.Lanczos)
 
-	// processImage := imaging.Thumbnail(inputImage, 200, 200, imaging.Lanczos)
 	processImage = imaging.Sharpen(processImage, 1.2)
 	processImage = imaging.AdjustBrightness(processImage, 3)
 	processImage = imaging.AdjustContrast(processImage, 1)
@@ -62,4 +59,6 @@ func convertTumbnail(reader io.Reader, output string) {
 
 	//imaging.Save(m, output)
 	jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Thumbnail.Quality})
+
+	return processImage
 }

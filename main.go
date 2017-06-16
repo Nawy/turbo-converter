@@ -12,19 +12,19 @@ import (
 var conf appconfig
 
 type appconfig struct {
-	Port    string `yaml:"port"`
-	Storage struct {
-		Path string `yaml:"path"`
-	}
+	Port  string `yaml:"port"`
+	Salt  string `yaml:"salt"`
 	Image struct {
-		MaxWidth  int `yaml:"maxwidth"`
-		MaxHeight int `yaml:"maxheight"`
-		Quality   int `yaml:"quality"`
+		Path      string `yaml:"path"`
+		MaxWidth  int    `yaml:"maxwidth"`
+		MaxHeight int    `yaml:"maxheight"`
+		Quality   int    `yaml:"quality"`
 	}
 	Thumbnail struct {
-		MaxWidth  int `yaml:"maxwidth"`
-		MaxHeight int `yaml:"maxheight"`
-		Quality   int `yaml:"quality"`
+		Path      string `yaml:"path"`
+		MaxWidth  int    `yaml:"maxwidth"`
+		MaxHeight int    `yaml:"maxheight"`
+		Quality   int    `yaml:"quality"`
 	}
 }
 
@@ -54,7 +54,10 @@ func getPathFromArgs() string {
 
 func main() {
 	conf = *loadAppConfig(getPathFromArgs(), &conf)
+	initHashGen()
+
 	fmt.Println("image-converter started on port ", conf.Port)
 	http.HandleFunc("/upload", uploadImageHandler)
+	http.HandleFunc("/status", statusHandler)
 	http.ListenAndServe(conf.Port, nil)
 }
