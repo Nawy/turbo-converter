@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
+	"os"
+	"strconv"
+	"syscall"
+	"time"
 
 	"github.com/disintegration/imaging"
 )
@@ -22,8 +25,10 @@ type StatusResponseJSON struct {
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	inputImage, err := imaging.Decode(r.Body)
+
 	if err != nil {
-		fmt.Fprintf(w, "Error %d", 1)
+		log.Error("Cannot decode uploaded date")
+		return
 	}
 
 	imagePath := getPathWithHash(conf.Image.Path, getHash())
@@ -31,6 +36,8 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	optimalImage := convertImage(inputImage, imagePath)
 	convertTumbnail(optimalImage, thumbnailPath)
+
+	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", imagePath, thumbnailPath)
 
 	response := ImageResponseJSON{imagePath, thumbnailPath}
 	jsonResponse(w, response)
@@ -43,7 +50,42 @@ func deleteImageHandler(w http.ResponseWriter, r *http.Request) {
 
 // handler for request status of server
 func statusHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Result: %s", getHash())
+	var stat syscall.Statfs_t
+	wd, err := os.Getwd()
+
+	if err != nil {
+		log.Error("Internal error of reading free space")
+		return
+	}
+
+	syscall.Statfs(wd, &stat)
+
+	freeSpace := stat.Bavail * uint64(stat.Bsize)
+	response := StatusResponseJSON{time.Now().String(), convertMemValue(freeSpace)}
+
+	jsonResponse(w, response)
+}
+
+func convertMemValue(memBytes uint64) string {
+	var result float64 = float64(memBytes)
+	memDimension := "BYTE"
+	if result/1024 >= 1 {
+		result = result / 1024
+		memDimension = "KB"
+	}
+
+	if result/1024 >= 1 {
+		result = result / 1024
+		memDimension = "MB"
+	}
+
+	if result/1024 >= 1 {
+		result = result / 1024
+		memDimension = "GB"
+	}
+
+	resultString := strconv.FormatFloat(result, 'f', 2, 64) + memDimension
+	return resultString
 }
 
 func jsonResponse(w http.ResponseWriter, response interface{}) {

@@ -26,6 +26,9 @@ type appconfig struct {
 		MaxHeight int    `yaml:"maxheight"`
 		Quality   int    `yaml:"quality"`
 	}
+	Logging struct {
+		Path string `yaml:"path"`
+	}
 }
 
 func loadAppConfig(confPath string, conf *appconfig) *appconfig {
@@ -55,9 +58,12 @@ func getPathFromArgs() string {
 func main() {
 	conf = *loadAppConfig(getPathFromArgs(), &conf)
 	initHashGen()
+	initLogging()
 
 	fmt.Println("image-converter started on port ", conf.Port)
+
 	http.HandleFunc("/upload", uploadImageHandler)
 	http.HandleFunc("/status", statusHandler)
+
 	http.ListenAndServe(conf.Port, nil)
 }
