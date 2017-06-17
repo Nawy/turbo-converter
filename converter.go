@@ -13,52 +13,78 @@ type resizePoint struct {
 	Height int
 }
 
-func resizeImage(sourceImage image.Image, maxWidth, maxHeight int) *image.NRGBA {
-	resizeValue := resizePoint{0, 0}
+func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, filter imaging.ResampleFilter) *image.NRGBA {
+	resizeValue := resizePoint{sourceImage.Bounds().Dx(), sourceImage.Bounds().Dy()}
 
 	if sourceImage.Bounds().Dx() > sourceImage.Bounds().Dy() {
-		if sourceImage.Bounds().Dx() > conf.Image.MaxWidth {
+		if sourceImage.Bounds().Dx() > maxWidth {
 			resizeValue.Width = maxWidth
+			resizeValue.Height = 0
 		}
 	} else {
-		if sourceImage.Bounds().Dy() > conf.Image.MaxHeight {
+		if sourceImage.Bounds().Dy() > maxHeight {
+			resizeValue.Width = 0
 			resizeValue.Height = maxHeight
 		}
 	}
 
-	return imaging.Resize(sourceImage, resizeValue.Width, resizeValue.Height, imaging.Lanczos)
+	return imaging.Resize(sourceImage, resizeValue.Width, resizeValue.Height, filter)
 }
 
-func convertImage(inputImage image.Image, output string) image.Image {
+func convertImage(inputImage image.Image, output string) (image.Image, error) {
 
-	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight)
+	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight, imaging.Lanczos)
 	processImage = imaging.Sharpen(processImage, 0.2)
 	processImage = imaging.AdjustBrightness(processImage, 1)
 	processImage = imaging.AdjustContrast(processImage, 1)
 
-	outputImage, _ := os.Create(output)
+	outputImage, err := os.Create(output)
 	defer outputImage.Close()
+	if err != nil {
+		log.Errorf("Cannot open file %s", output)
+		return nil, err
+	}
 
-	jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Image.Quality})
+	err = jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Image.Quality})
+	if err != nil {
+		log.Errorf("Cannot save image with name %s", output)
+	}
 
-	return processImage
+	return processImage, err
 }
 
-func convertTumbnail(inputImage image.Image, output string) image.Image {
+func convertTumbnail(inputImage image.Image, output string) (image.Image, error) {
 
-	processImage := imaging.Resize(inputImage, 300, 0, imaging.Lanczos)
-	processImage = imaging.Fill(processImage, 200, 200, imaging.Center, imaging.Lanczos)
+	processImage := resizeImage(
+		inputImage,
+		conf.Thumbnail.MaxWidth,
+		conf.Thumbnail.MaxHeight,
+		imaging.Blackman,
+	)
+	processImage = imaging.Fill(
+		processImage,
+		conf.Thumbnail.MaxWidth,
+		conf.Thumbnail.MaxHeight,
+		imaging.Center,
+		imaging.Blackman,
+	)
 
 	processImage = imaging.Sharpen(processImage, 1.2)
 	processImage = imaging.AdjustBrightness(processImage, 3)
 	processImage = imaging.AdjustContrast(processImage, 1)
 	processImage = imaging.AdjustGamma(processImage, 1.0)
 
-	outputImage, _ := os.Create(output)
+	outputImage, err := os.Create(output)
 	defer outputImage.Close()
+	if err != nil {
+		log.Errorf("Cannot open file %s", output)
+		return nil, err
+	}
 
-	//imaging.Save(m, output)
-	jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Thumbnail.Quality})
+	err = jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Thumbnail.Quality})
+	if err != nil {
+		log.Errorf("Cannot save thumbnail with name %s", output)
+	}
 
-	return processImage
+	return processImage, err
 }

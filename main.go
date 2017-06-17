@@ -27,7 +27,8 @@ type appconfig struct {
 		Quality   int    `yaml:"quality"`
 	}
 	Logging struct {
-		Path string `yaml:"path"`
+		Path   string `yaml:"path"`
+		Format string `yaml:"format"`
 	}
 }
 

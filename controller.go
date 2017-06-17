@@ -21,26 +21,37 @@ type StatusResponseJSON struct {
 	Space string `json:"space"`
 }
 
+type ErrorResponseJSON struct {
+	Description string `json:"description"`
+}
+
 // handler for request upload image(http)
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	inputImage, err := imaging.Decode(r.Body)
 
 	if err != nil {
-		log.Error("Cannot decode uploaded date")
+		log.Error("Cannot decode uploaded image")
+		jsonResponse(w, ErrorResponseJSON{"Body is empty"}, 400)
 		return
 	}
 
 	imagePath := getPathWithHash(conf.Image.Path, getHash())
 	thumbnailPath := getPathWithHash(conf.Thumbnail.Path, getHash())
 
-	optimalImage := convertImage(inputImage, imagePath)
-	convertTumbnail(optimalImage, thumbnailPath)
+	optimalImage, errImage := convertImage(inputImage, imagePath)
+	if isError(errImage, w, "Cannot convert image") {
+		return
+	}
+	_, errThumbnail := convertTumbnail(optimalImage, thumbnailPath)
+	if isError(errThumbnail, w, "Cannot convert tumbnail") {
+		return
+	}
 
 	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", imagePath, thumbnailPath)
 
 	response := ImageResponseJSON{imagePath, thumbnailPath}
-	jsonResponse(w, response)
+	jsonResponse(w, response, 200)
 }
 
 // handler for request delete image by image path(http)
@@ -63,7 +74,7 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	freeSpace := stat.Bavail * uint64(stat.Bsize)
 	response := StatusResponseJSON{time.Now().String(), convertMemValue(freeSpace)}
 
-	jsonResponse(w, response)
+	jsonResponse(w, response, 200)
 }
 
 func convertMemValue(memBytes uint64) string {
@@ -88,13 +99,24 @@ func convertMemValue(memBytes uint64) string {
 	return resultString
 }
 
-func jsonResponse(w http.ResponseWriter, response interface{}) {
+func isError(err error, w http.ResponseWriter, message string) bool {
+	if err != nil {
+		log.Errorf("Error convert ")
+		jsonResponse(w, ErrorResponseJSON{"Cannot convert image"}, 500)
+		return true
+	} else {
+		return false
+	}
+}
+
+func jsonResponse(w http.ResponseWriter, response interface{}, statusCode int) {
 	responseJSON, err := json.Marshal(response)
 
 	if err != nil {
-		panic("Canno create json response")
+		panic("Cannot create json response")
 	}
 
 	w.Header().Add("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(statusCode)
 	w.Write(responseJSON)
 }
