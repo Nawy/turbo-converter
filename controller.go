@@ -36,21 +36,27 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imagePath := getPathWithHash(conf.Image.Path, getHash())
-	thumbnailPath := getPathWithHash(conf.Thumbnail.Path, getHash())
+	imageHash := getHash()
+	thumbnailHash := getHash()
 
-	optimalImage, errImage := convertImage(inputImage, imagePath)
+	storageImagePath := getPathWithHash(conf.Image.StoragePath, imageHash)
+	storageThumbnailPath := getPathWithHash(conf.Thumbnail.StoragePath, thumbnailHash)
+
+	responseImagePath := getPathWithHash(conf.Image.ResponsePath, imageHash)
+	responseThumbnailPath := getPathWithHash(conf.Thumbnail.ResponsePath, thumbnailHash)
+
+	optimalImage, errImage := convertImage(inputImage, storageImagePath)
 	if isError(errImage, w, "Cannot convert image") {
 		return
 	}
-	_, errThumbnail := convertTumbnail(optimalImage, thumbnailPath)
+	_, errThumbnail := convertTumbnail(optimalImage, storageThumbnailPath)
 	if isError(errThumbnail, w, "Cannot convert tumbnail") {
 		return
 	}
 
-	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", imagePath, thumbnailPath)
+	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", storageImagePath, storageThumbnailPath)
 
-	response := ImageResponseJSON{imagePath, thumbnailPath}
+	response := ImageResponseJSON{responseImagePath, responseThumbnailPath}
 	jsonResponse(w, response, 200)
 }
 

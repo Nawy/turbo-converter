@@ -34,9 +34,10 @@ func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, filter imagin
 func convertImage(inputImage image.Image, output string) (image.Image, error) {
 
 	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight, imaging.Lanczos)
-	processImage = imaging.Sharpen(processImage, 0.2)
-	processImage = imaging.AdjustBrightness(processImage, 1)
-	processImage = imaging.AdjustContrast(processImage, 1)
+	processImage = imaging.Sharpen(processImage, conf.Image.PostProcessing.Sharpen)
+	processImage = imaging.AdjustBrightness(processImage, conf.Image.PostProcessing.Brightness)
+	processImage = imaging.AdjustContrast(processImage, conf.Image.PostProcessing.Contrast)
+	processImage = imaging.AdjustGamma(processImage, conf.Image.PostProcessing.Gamma)
 
 	outputImage, err := os.Create(output)
 	defer outputImage.Close()
@@ -69,10 +70,10 @@ func convertTumbnail(inputImage image.Image, output string) (image.Image, error)
 		imaging.Blackman,
 	)
 
-	processImage = imaging.Sharpen(processImage, 1.2)
-	processImage = imaging.AdjustBrightness(processImage, 3)
-	processImage = imaging.AdjustContrast(processImage, 1)
-	processImage = imaging.AdjustGamma(processImage, 1.0)
+	processImage = imaging.Sharpen(processImage, conf.Thumbnail.PostProcessing.Sharpen)
+	processImage = imaging.AdjustBrightness(processImage, conf.Thumbnail.PostProcessing.Brightness)
+	processImage = imaging.AdjustContrast(processImage, conf.Thumbnail.PostProcessing.Contrast)
+	processImage = imaging.AdjustGamma(processImage, conf.Thumbnail.PostProcessing.Gamma)
 
 	outputImage, err := os.Create(output)
 	defer outputImage.Close()

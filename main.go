@@ -15,16 +15,30 @@ type appconfig struct {
 	Port  string `yaml:"port"`
 	Salt  string `yaml:"salt"`
 	Image struct {
-		Path      string `yaml:"path"`
-		MaxWidth  int    `yaml:"maxwidth"`
-		MaxHeight int    `yaml:"maxheight"`
-		Quality   int    `yaml:"quality"`
+		StoragePath    string `yaml:"storage_path"`
+		ResponsePath   string `yaml:"response_path"`
+		MaxWidth       int    `yaml:"maxwidth"`
+		MaxHeight      int    `yaml:"maxheight"`
+		Quality        int    `yaml:"quality"`
+		PostProcessing struct {
+			Sharpen    float64 `yaml:"sharpen"`
+			Brightness float64 `yaml:"brightness"`
+			Contrast   float64 `yaml:"contrast"`
+			Gamma      float64 `yaml:"gamma"`
+		}
 	}
 	Thumbnail struct {
-		Path      string `yaml:"path"`
-		MaxWidth  int    `yaml:"maxwidth"`
-		MaxHeight int    `yaml:"maxheight"`
-		Quality   int    `yaml:"quality"`
+		StoragePath    string `yaml:"storage_path"`
+		ResponsePath   string `yaml:"response_path"`
+		MaxWidth       int    `yaml:"maxwidth"`
+		MaxHeight      int    `yaml:"maxheight"`
+		Quality        int    `yaml:"quality"`
+		PostProcessing struct {
+			Sharpen    float64 `yaml:"sharpen"`
+			Brightness float64 `yaml:"brightness"`
+			Contrast   float64 `yaml:"contrast"`
+			Gamma      float64 `yaml:"gamma"`
+		}
 	}
 	Logging struct {
 		Path   string `yaml:"path"`

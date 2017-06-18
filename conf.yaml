@@ -1,15 +1,27 @@
 port: ":8089"
 salt: "Holly"
 image:
-  path: "images"
+  storage_path: "images"
+  response_path: ""
   maxwidth: 2000
   maxheight: 2000
   quality: 85
+  post_processing:
+    sharpen: 0.2
+    brightness: 1
+    contrast: 1
+    gamma: 1.0
 thumbnail:
-  path: "tumbnails"
+  storage_path: "tumbnails"
+  response_path: ""
   maxwidth: 200
   maxheight: 200
   quality: 80
+  post_processing:
+    sharpen: 1.2
+    brightness: 3
+    contrast: 1
+    gamma: 1.1
 logging:
   path: "test.log"
   format: "%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{message}"
