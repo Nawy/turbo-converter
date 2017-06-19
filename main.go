@@ -25,7 +25,7 @@ type appconfig struct {
 			Brightness float64 `yaml:"brightness"`
 			Contrast   float64 `yaml:"contrast"`
 			Gamma      float64 `yaml:"gamma"`
-		}
+		} `yaml:"post_processing"`
 	}
 	Thumbnail struct {
 		StoragePath    string `yaml:"storage_path"`
@@ -38,7 +38,7 @@ type appconfig struct {
 			Brightness float64 `yaml:"brightness"`
 			Contrast   float64 `yaml:"contrast"`
 			Gamma      float64 `yaml:"gamma"`
-		}
+		} `yaml:"post_processing"`
 	}
 	Logging struct {
 		Path   string `yaml:"path"`

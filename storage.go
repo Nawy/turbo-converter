@@ -11,3 +11,10 @@ func getPathWithHash(path, hash string) string {
 	resultPath := resultFolder + "/" + hash[1:] + ".jpg"
 	return resultPath
 }
+
+func getResponsePathWithHash(path, hash string) string {
+	resultFolder := path + "/" + hash[0:1]
+
+	resultPath := resultFolder + "/" + hash[1:] + ".jpg"
+	return resultPath
+}

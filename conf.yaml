@@ -2,25 +2,25 @@ port: ":8089"
 salt: "Holly"
 image:
   storage_path: "images"
-  response_path: ""
+  response_path: "i/"
   maxwidth: 2000
   maxheight: 2000
   quality: 85
   post_processing:
     sharpen: 0.2
-    brightness: 1
-    contrast: 1
+    brightness: 1.0
+    contrast: 1.0
     gamma: 1.0
 thumbnail:
   storage_path: "tumbnails"
-  response_path: ""
+  response_path: "/t"
   maxwidth: 200
   maxheight: 200
   quality: 80
   post_processing:
     sharpen: 1.2
-    brightness: 3
-    contrast: 1
+    brightness: 3.0
+    contrast: 1.0
     gamma: 1.1
 logging:
   path: "test.log"

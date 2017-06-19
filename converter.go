@@ -33,6 +33,13 @@ func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, filter imagin
 
 func convertImage(inputImage image.Image, output string) (image.Image, error) {
 
+	log.Infof(
+		"IMAGE: Sharpen: %f\nBrightness: %f\nContrast: %f\nGamma %f\n",
+		conf.Image.PostProcessing.Sharpen,
+		conf.Image.PostProcessing.Brightness,
+		conf.Image.PostProcessing.Contrast,
+		conf.Image.PostProcessing.Gamma,
+	)
 	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight, imaging.Lanczos)
 	processImage = imaging.Sharpen(processImage, conf.Image.PostProcessing.Sharpen)
 	processImage = imaging.AdjustBrightness(processImage, conf.Image.PostProcessing.Brightness)
@@ -54,7 +61,15 @@ func convertImage(inputImage image.Image, output string) (image.Image, error) {
 	return processImage, err
 }
 
-func convertTumbnail(inputImage image.Image, output string) (image.Image, error) {
+func convertThumbnail(inputImage image.Image, output string) (image.Image, error) {
+
+	log.Infof(
+		"THUMBNAIL: Sharpen: %f\nBrightness: %f\nContrast: %f\nGamma %f\n",
+		conf.Thumbnail.PostProcessing.Sharpen,
+		conf.Thumbnail.PostProcessing.Brightness,
+		conf.Thumbnail.PostProcessing.Contrast,
+		conf.Thumbnail.PostProcessing.Gamma,
+	)
 
 	processImage := resizeImage(
 		inputImage,

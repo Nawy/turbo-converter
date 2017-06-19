@@ -11,16 +11,19 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+// ImageResponseJSON response for upload request in convertation process
 type ImageResponseJSON struct {
 	Image     string `json:"image"`
 	Thumbnail string `json:"thumbnail"`
 }
 
+// StatusResponseJSON status response, contains time and available space on the disk
 type StatusResponseJSON struct {
 	Time  string `json:"time"`
 	Space string `json:"space"`
 }
 
+// ErrorResponseJSON error response contains only error description in JSON format
 type ErrorResponseJSON struct {
 	Description string `json:"description"`
 }
@@ -42,14 +45,14 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	storageImagePath := getPathWithHash(conf.Image.StoragePath, imageHash)
 	storageThumbnailPath := getPathWithHash(conf.Thumbnail.StoragePath, thumbnailHash)
 
-	responseImagePath := getPathWithHash(conf.Image.ResponsePath, imageHash)
-	responseThumbnailPath := getPathWithHash(conf.Thumbnail.ResponsePath, thumbnailHash)
+	responseImagePath := getResponsePathWithHash(conf.Image.ResponsePath, imageHash)
+	responseThumbnailPath := getResponsePathWithHash(conf.Thumbnail.ResponsePath, thumbnailHash)
 
 	optimalImage, errImage := convertImage(inputImage, storageImagePath)
 	if isError(errImage, w, "Cannot convert image") {
 		return
 	}
-	_, errThumbnail := convertTumbnail(optimalImage, storageThumbnailPath)
+	_, errThumbnail := convertThumbnail(optimalImage, storageThumbnailPath)
 	if isError(errThumbnail, w, "Cannot convert tumbnail") {
 		return
 	}
@@ -84,10 +87,10 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func convertMemValue(memBytes uint64) string {
-	var result float64 = float64(memBytes)
+	var result float64
 	memDimension := "BYTE"
-	if result/1024 >= 1 {
-		result = result / 1024
+	if float64(memBytes)/1024 >= 1 {
+		result = float64(memBytes) / 1024
 		memDimension = "KB"
 	}
 
@@ -110,9 +113,8 @@ func isError(err error, w http.ResponseWriter, message string) bool {
 		log.Errorf("Error convert ")
 		jsonResponse(w, ErrorResponseJSON{"Cannot convert image"}, 500)
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 func jsonResponse(w http.ResponseWriter, response interface{}, statusCode int) {
