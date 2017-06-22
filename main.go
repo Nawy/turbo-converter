@@ -9,6 +9,16 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Type is type of objects
+type Type int
+
+const (
+	// IMAGE is full size image
+	IMAGE = Type(1)
+	// THUMBNAIL is small image
+	THUMBNAIL = Type(2)
+)
+
 var conf appconfig
 
 type appconfig struct {
@@ -26,6 +36,7 @@ type appconfig struct {
 			Contrast   float64 `yaml:"contrast"`
 			Gamma      float64 `yaml:"gamma"`
 		} `yaml:"post_processing"`
+		Downscale string `yaml:"downscale"`
 	}
 	Thumbnail struct {
 		StoragePath    string `yaml:"storage_path"`
@@ -39,6 +50,10 @@ type appconfig struct {
 			Contrast   float64 `yaml:"contrast"`
 			Gamma      float64 `yaml:"gamma"`
 		} `yaml:"post_processing"`
+		Resize struct {
+			Upscale   string `yaml:"upscale"`
+			Downscale string `yaml:"downscale"`
+		} `yaml:"resize"`
 	}
 	Logging struct {
 		Path   string `yaml:"path"`

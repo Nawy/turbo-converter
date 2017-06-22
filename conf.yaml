@@ -1,8 +1,9 @@
 port: ":8089"
 salt: "Holly"
+
 image:
   storage_path: "images"
-  response_path: "i/"
+  response_path: "/i"
   maxwidth: 2000
   maxheight: 2000
   quality: 85
@@ -11,6 +12,8 @@ image:
     brightness: 1.0
     contrast: 1.0
     gamma: 1.0
+  downscale: "Hamming"
+
 thumbnail:
   storage_path: "tumbnails"
   response_path: "/t"
@@ -22,6 +25,11 @@ thumbnail:
     brightness: 3.0
     contrast: 1.0
     gamma: 1.1
+  resize:
+    upscale: "Linear"
+    downscale: "Hamming"
+
+
 logging:
   path: "test.log"
   format: "%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{message}"

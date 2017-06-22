@@ -13,18 +13,32 @@ type resizePoint struct {
 	Height int
 }
 
-func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, filter imaging.ResampleFilter) *image.NRGBA {
-	resizeValue := resizePoint{sourceImage.Bounds().Dx(), sourceImage.Bounds().Dy()}
+func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, imageType Type) *image.NRGBA {
+	width := sourceImage.Bounds().Dx()
+	height := sourceImage.Bounds().Dy()
+	resizeValue := resizePoint{0, 0}
 
-	if sourceImage.Bounds().Dx() > sourceImage.Bounds().Dy() {
-		if sourceImage.Bounds().Dx() > maxWidth {
+	if width > height {
+		if width > maxWidth {
 			resizeValue.Width = maxWidth
 			resizeValue.Height = 0
 		}
 	} else {
-		if sourceImage.Bounds().Dy() > maxHeight {
+		if height > maxHeight {
 			resizeValue.Width = 0
 			resizeValue.Height = maxHeight
+		}
+	}
+
+	var filter imaging.ResampleFilter
+
+	if imageType == IMAGE {
+		if width > maxWidth || height > maxHeight {
+			filter = getFilterByType(conf.Image.Downscale)
+		}
+	} else {
+		if width > maxWidth || height > maxHeight {
+			filter = getFilterByType(conf.Thumbnail.Resize.Downscale)
 		}
 	}
 
@@ -40,7 +54,12 @@ func convertImage(inputImage image.Image, output string) (image.Image, error) {
 		conf.Image.PostProcessing.Contrast,
 		conf.Image.PostProcessing.Gamma,
 	)
-	processImage := resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight, imaging.Lanczos)
+
+	processImage := inputImage
+	if isNeedScale(processImage, conf.Image.MaxWidth, conf.Image.MaxHeight) {
+		processImage = resizeImage(inputImage, conf.Image.MaxWidth, conf.Image.MaxHeight, IMAGE)
+	}
+
 	processImage = imaging.Sharpen(processImage, conf.Image.PostProcessing.Sharpen)
 	processImage = imaging.AdjustBrightness(processImage, conf.Image.PostProcessing.Brightness)
 	processImage = imaging.AdjustContrast(processImage, conf.Image.PostProcessing.Contrast)
@@ -71,18 +90,22 @@ func convertThumbnail(inputImage image.Image, output string) (image.Image, error
 		conf.Thumbnail.PostProcessing.Gamma,
 	)
 
-	processImage := resizeImage(
-		inputImage,
-		conf.Thumbnail.MaxWidth,
-		conf.Thumbnail.MaxHeight,
-		imaging.Blackman,
-	)
+	processImage := inputImage
+	if isNeedScale(processImage, conf.Thumbnail.MaxWidth, conf.Thumbnail.MaxHeight) {
+		processImage = resizeImage(
+			inputImage,
+			conf.Thumbnail.MaxWidth,
+			conf.Thumbnail.MaxHeight,
+			THUMBNAIL,
+		)
+	}
+
 	processImage = imaging.Fill(
 		processImage,
 		conf.Thumbnail.MaxWidth,
 		conf.Thumbnail.MaxHeight,
 		imaging.Center,
-		imaging.Blackman,
+		getFilterByType(conf.Thumbnail.Resize.Upscale),
 	)
 
 	processImage = imaging.Sharpen(processImage, conf.Thumbnail.PostProcessing.Sharpen)
@@ -103,4 +126,46 @@ func convertThumbnail(inputImage image.Image, output string) (image.Image, error
 	}
 
 	return processImage, err
+}
+
+func getFilterByType(value string) imaging.ResampleFilter {
+	switch value {
+	case "BSpline":
+		return imaging.BSpline
+	case "Bartlett":
+		return imaging.Bartlett
+	case "Blackman":
+		return imaging.Blackman
+	case "Box":
+		return imaging.Box
+	case "CatmullRom":
+		return imaging.CatmullRom
+	case "Cosine":
+		return imaging.Cosine
+	case "Gaussian":
+		return imaging.Gaussian
+	case "Hamming":
+		return imaging.Hamming
+	case "Hann":
+		return imaging.Hann
+	case "Hermite":
+		return imaging.Hermite
+	case "Linear":
+		return imaging.Linear
+	case "MitchellNetravali":
+		return imaging.MitchellNetravali
+	case "NearestNeighbor":
+		return imaging.NearestNeighbor
+	case "Welch":
+		return imaging.Welch
+	default:
+		return imaging.Lanczos
+	}
+}
+
+func isNeedScale(img image.Image, maxWidth, maxHeight int) bool {
+	if img.Bounds().Dx() > maxWidth || img.Bounds().Dy() > maxHeight {
+		return true
+	}
+	return false
 }
