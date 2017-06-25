@@ -30,6 +30,7 @@ type ErrorResponseJSON struct {
 
 // handler for request upload image(http)
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
+	if isMethod(w,r, "POST") {return}
 
 	inputImage, err := imaging.Decode(r.Body)
 
@@ -65,10 +66,8 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 // handler for request delete image by image path(http)
 func deleteImageHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "DELETE" {
-		jsonResponse(w, ErrorResponseJSON{"You should use DELETE http method"}, 400)
-		return
-	}
+	if isMethod(w,r, "DELETE") {return}
+
 	decoder := json.NewDecoder(r.Body)
 	requestJson := ImageJSON{}
 
@@ -149,6 +148,14 @@ func isError(err *Error, w http.ResponseWriter, message string, status int) bool
 		return true
 	}
 	return false
+}
+
+func isMethod(w http.ResponseWriter, r *http.Request, methodName string) bool {
+	if r.Method != methodName {
+		jsonResponse(w, ErrorResponseJSON{"You should use " + methodName + " http method"}, 400)
+		return false
+	}
+	return true
 }
 
 func codeResponse(w http.ResponseWriter, statusCode int) {
