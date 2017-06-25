@@ -1,0 +1,6 @@
+01:19:06.422 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg
+01:19:06.422 isError ▶ ERRO Error: File isn't exists /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg, %!s(MISSING)
+01:19:09.105 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg
+01:19:09.105 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/thumbnails/m/gh8pT49psEz.jpg
+h8pT49psEz.jpg]
+01:17:57.968 isError ▶ ERRO Error: Cannot remove file /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg, %!s(MISSING)

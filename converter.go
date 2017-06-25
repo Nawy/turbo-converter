@@ -45,10 +45,10 @@ func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, imageType Typ
 	return imaging.Resize(sourceImage, resizeValue.Width, resizeValue.Height, filter)
 }
 
-func convertImage(inputImage image.Image, output string) (image.Image, error) {
+func convertImage(inputImage image.Image, output string) (image.Image, *Error) {
 
 	log.Infof(
-		"IMAGE: Sharpen: %f\nBrightness: %f\nContrast: %f\nGamma %f\n",
+		"IMAGE: Sharpen: %f; Brightness: %f; Contrast: %f; Gamma %f;",
 		conf.Image.PostProcessing.Sharpen,
 		conf.Image.PostProcessing.Brightness,
 		conf.Image.PostProcessing.Contrast,
@@ -68,22 +68,21 @@ func convertImage(inputImage image.Image, output string) (image.Image, error) {
 	outputImage, err := os.Create(output)
 	defer outputImage.Close()
 	if err != nil {
-		log.Errorf("Cannot open file %s", output)
-		return nil, err
+		return nil, &Error{"Cannot open file " + output}
 	}
 
 	err = jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Image.Quality})
 	if err != nil {
-		log.Errorf("Cannot save image with name %s", output)
+		return nil, &Error{"Cannot save image with name "}
 	}
 
-	return processImage, err
+	return processImage, nil
 }
 
-func convertThumbnail(inputImage image.Image, output string) (image.Image, error) {
+func convertThumbnail(inputImage image.Image, output string) (image.Image, *Error) {
 
 	log.Infof(
-		"THUMBNAIL: Sharpen: %f\nBrightness: %f\nContrast: %f\nGamma %f\n",
+		"THUMBNAIL: Sharpen: %f; Brightness: %f; Contrast: %f; Gamma %f;",
 		conf.Thumbnail.PostProcessing.Sharpen,
 		conf.Thumbnail.PostProcessing.Brightness,
 		conf.Thumbnail.PostProcessing.Contrast,
@@ -116,16 +115,15 @@ func convertThumbnail(inputImage image.Image, output string) (image.Image, error
 	outputImage, err := os.Create(output)
 	defer outputImage.Close()
 	if err != nil {
-		log.Errorf("Cannot open file %s", output)
-		return nil, err
+		return nil, &Error{"Cannot open file " + output}
 	}
 
 	err = jpeg.Encode(outputImage, processImage, &jpeg.Options{Quality: conf.Thumbnail.Quality})
 	if err != nil {
-		log.Errorf("Cannot save thumbnail with name %s", output)
+		return nil, &Error{"Cannot save thumbnail with name " + output}
 	}
 
-	return processImage, err
+	return processImage, nil
 }
 
 func getFilterByType(value string) imaging.ResampleFilter {

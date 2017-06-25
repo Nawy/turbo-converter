@@ -11,8 +11,8 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-// ImageResponseJSON response for upload request in convertation process
-type ImageResponseJSON struct {
+// ImageJSON response for upload request in convertation process
+type ImageJSON struct {
 	Image     string `json:"image"`
 	Thumbnail string `json:"thumbnail"`
 }
@@ -49,23 +49,57 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	responseThumbnailPath := getResponsePathWithHash(conf.Thumbnail.ResponsePath, thumbnailHash)
 
 	optimalImage, errImage := convertImage(inputImage, storageImagePath)
-	if isError(errImage, w, "Cannot convert image") {
+	if isError(errImage, w, "Cannot convert image", 500) {
 		return
 	}
 	_, errThumbnail := convertThumbnail(optimalImage, storageThumbnailPath)
-	if isError(errThumbnail, w, "Cannot convert tumbnail") {
+	if isError(errThumbnail, w, "Cannot convert tumbnail", 500) {
 		return
 	}
 
 	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", storageImagePath, storageThumbnailPath)
 
-	response := ImageResponseJSON{responseImagePath, responseThumbnailPath}
+	response := ImageJSON{responseImagePath, responseThumbnailPath}
 	jsonResponse(w, response, 200)
 }
 
 // handler for request delete image by image path(http)
 func deleteImageHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "DELETE" {
+		jsonResponse(w, ErrorResponseJSON{"You should use DELETE http method"}, 400)
+		return
+	}
+	decoder := json.NewDecoder(r.Body)
+	requestJson := ImageJSON{}
 
+	err := decoder.Decode(&requestJson)
+	if err != nil {
+		log.Errorf("\nError: %s", err)
+		jsonResponse(w, ErrorResponseJSON{"Wrong JSON request!"}, 400)
+		return
+	}
+
+	imagePath, error := getStorageImagePath(requestJson.Image)
+	if isError(error, w, "Wrong image path", 400){
+		return
+	}
+
+	thumbnailPath, error := getStorageThumbnailPath(requestJson.Thumbnail)
+	if isError(error, w, "Wrong thumbnail path", 400){
+		return
+	}
+
+
+	_, error = deleteFile(imagePath)
+	if isError(error, w, "Wrong image path", 400){
+		return
+	}
+
+	_, error = deleteFile(thumbnailPath)
+	if isError(error, w, "Wrong thumbnail path", 400){
+		return
+	}
+	codeResponse(w, 200)
 }
 
 // handler for request status of server
@@ -108,13 +142,17 @@ func convertMemValue(memBytes uint64) string {
 	return resultString
 }
 
-func isError(err error, w http.ResponseWriter, message string) bool {
+func isError(err *Error, w http.ResponseWriter, message string, status int) bool {
 	if err != nil {
-		log.Errorf("Error convert ")
-		jsonResponse(w, ErrorResponseJSON{"Cannot convert image"}, 500)
+		log.Errorf("Error: %s, %s", err.msg)
+		jsonResponse(w, ErrorResponseJSON{message}, status)
 		return true
 	}
 	return false
+}
+
+func codeResponse(w http.ResponseWriter, statusCode int) {
+	w.WriteHeader(statusCode)
 }
 
 func jsonResponse(w http.ResponseWriter, response interface{}, statusCode int) {

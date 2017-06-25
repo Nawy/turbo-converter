@@ -90,10 +90,10 @@ func main() {
 	initHashGen()
 	initLogging()
 
-	fmt.Println("image-converter started on port ", conf.Port)
-
 	http.HandleFunc("/upload", uploadImageHandler)
+	http.HandleFunc("/delete", deleteImageHandler)
 	http.HandleFunc("/status", statusHandler)
 
+	fmt.Println("image-converter started on port ", conf.Port)
 	http.ListenAndServe(conf.Port, nil)
 }

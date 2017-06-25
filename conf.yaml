@@ -2,7 +2,7 @@ port: ":8089"
 salt: "Holly"
 
 image:
-  storage_path: "images"
+  storage_path: "/home/ermolaev/Pictures/images"
   response_path: "/i"
   maxwidth: 2000
   maxheight: 2000
@@ -15,7 +15,7 @@ image:
   downscale: "Hamming"
 
 thumbnail:
-  storage_path: "tumbnails"
+  storage_path: "/home/ermolaev/Pictures/thumbnails"
   response_path: "/t"
   maxwidth: 200
   maxheight: 200
@@ -28,7 +28,6 @@ thumbnail:
   resize:
     upscale: "Linear"
     downscale: "Hamming"
-
 
 logging:
   path: "test.log"

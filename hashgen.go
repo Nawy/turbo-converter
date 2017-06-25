@@ -30,7 +30,7 @@ func getHash() string {
 	nano := time.Now().Nanosecond() % 10000
 	randomNum := rand.Intn(99)
 
-	resultHash, _ := hashGen.Encode([]int{yearDay + year, nano, randomNum})
+	resultHash, _ := hashGen.Encode([]int{year,yearDay, nano, randomNum})
 
 	return resultHash
 }
