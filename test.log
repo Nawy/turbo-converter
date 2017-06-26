@@ -1,6 +1,7 @@
-01:19:06.422 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg
-01:19:06.422 isError ▶ ERRO Error: File isn't exists /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg, %!s(MISSING)
-01:19:09.105 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg
-01:19:09.105 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/thumbnails/m/gh8pT49psEz.jpg
-h8pT49psEz.jpg]
-01:17:57.968 isError ▶ ERRO Error: Cannot remove file /home/ermolaev/Pictures/images/g/NhjN2HlzSdD.jpg, %!s(MISSING)
+11:27:10.883 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg
+11:27:10.883 isError ▶ ERRO Error: File isn't exists /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg, %!s(MISSING)
+11:27:31.381 convertImage ▶ INFO IMAGE: Sharpen: 0.200000; Brightness: 1.000000; Contrast: 1.000000; Gamma 1.000000;
+11:27:31.660 convertThumbnail ▶ INFO THUMBNAIL: Sharpen: 1.200000; Brightness: 3.000000; Contrast: 1.000000; Gamma 1.100000;
+11:27:31.707 uploadImageHandler ▶ INFO Uploaded image=[/home/ermolaev/Pictures/images/m/gh8pT45QtEm.jpg] with tumblnail=[/home/ermolaev/Pictures/thumbnails/L/6hZesr1mUOR.jpg]
+11:27:37.864 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/m/gh8pT45QtEm.jpg
+11:27:37.864 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/thumbnails/L/6hZesr1mUOR.jpg
