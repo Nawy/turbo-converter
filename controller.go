@@ -33,11 +33,16 @@ type SimpleResponseJSON struct {
 	Response string `json:"response"`
 }
 
+var semaphore Semaphore = make(Semaphore, 3)
+
 // handler for request upload image(http)
 func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	if !isMethod(w, r, "POST") {
 		return
 	}
+
+	semaphore.Lock()
+	defer semaphore.Unlock()
 
 	inputImage, err := imaging.Decode(r.Body)
 
