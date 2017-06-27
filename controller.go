@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -27,6 +26,11 @@ type StatusResponseJSON struct {
 // ErrorResponseJSON error response contains only error description in JSON format
 type ErrorResponseJSON struct {
 	Description string `json:"description"`
+}
+
+// SimpleResponseJSON is simple one line response
+type SimpleResponseJSON struct {
+	Response string `json:"response"`
 }
 
 // handler for request upload image(http)
@@ -57,11 +61,11 @@ func uploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, errThumbnail := convertThumbnail(optimalImage, storageThumbnailPath)
-	if isError(errThumbnail, w, "Cannot convert tumbnail", 500) {
+	if isError(errThumbnail, w, "Cannot convert thumbnail", 500) {
 		return
 	}
 
-	log.Infof("Uploaded image=[%s] with tumblnail=[%s]", storageImagePath, storageThumbnailPath)
+	log.Infof("Uploaded image=[%s] with thumbnail=[%s]", storageImagePath, storageThumbnailPath)
 
 	response := ImageJSON{responseImagePath, responseThumbnailPath}
 	jsonResponse(w, response, 200)
@@ -121,21 +125,6 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 	response := StatusResponseJSON{time.Now().String(), convertMemValue(freeSpace)}
 
 	jsonResponse(w, response, 200)
-}
-
-func checkGraphics(w http.ResponseWriter, r *http.Request) {
-	inputImage, _ := imaging.Decode(r.Body)
-
-	pixels := make(map[uint32]bool)
-	for x := 0; x <= inputImage.Bounds().Dx(); x++ {
-		for y := 0; y < inputImage.Bounds().Dy(); y++ {
-			r, g, b, _ := inputImage.At(x, y).RGBA()
-			key := ((r*1000)+g)*1000 + b
-			pixels[uint32(key)] = true
-		}
-	}
-
-	fmt.Println("Result: ", len(pixels))
 }
 
 func convertMemValue(memBytes uint64) string {

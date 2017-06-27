@@ -1,7 +1,10 @@
-11:27:10.883 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg
-11:27:10.883 isError ▶ ERRO Error: File isn't exists /home/ermolaev/Pictures/images/g/NhjNHlzSdD.jpg, %!s(MISSING)
-11:27:31.381 convertImage ▶ INFO IMAGE: Sharpen: 0.200000; Brightness: 1.000000; Contrast: 1.000000; Gamma 1.000000;
-11:27:31.660 convertThumbnail ▶ INFO THUMBNAIL: Sharpen: 1.200000; Brightness: 3.000000; Contrast: 1.000000; Gamma 1.100000;
-11:27:31.707 uploadImageHandler ▶ INFO Uploaded image=[/home/ermolaev/Pictures/images/m/gh8pT45QtEm.jpg] with tumblnail=[/home/ermolaev/Pictures/thumbnails/L/6hZesr1mUOR.jpg]
-11:27:37.864 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/images/m/gh8pT45QtEm.jpg
-11:27:37.864 isFileExists ▶ INFO Check file /home/ermolaev/Pictures/thumbnails/L/6hZesr1mUOR.jpg
+11:45:18.585 convertImage ▶ INFO IMAGE: Sharpen: 0.200000; Brightness: 1.000000; Contrast: 1.000000; Gamma 1.000000;
+11:45:18.630 convertThumbnail ▶ INFO THUMBNAIL: Sharpen: 1.200000; Brightness: 3.000000; Contrast: 1.000000; Gamma 1.100000;
+11:45:18.647 uploadImageHandler ▶ INFO Uploaded image=[/home/ermolaev/Pictures/images/g/NhjOS63bfdK.jpg] with tumblnail=[/home/ermolaev/Pictures/thumbnails/z/YhYoUPR3t8D.jpg]
+565 convertImage ▶ INFO IMAGE: Sharpen: 0.200000; Brightness: 1.000000; Contrast: 1.000000; Gamma 1.000000;
+11:42:44.130 convertThumbnail ▶ INFO THUMBNAIL: Sharpen: 1.200000; Brightness: 3.000000; Contrast: 1.000000; Gamma 1.100000;
+11:42:44.176 uploadImageHandler ▶ INFO Uploaded image=[/home/ermolaev/Pictures/images/L/6hZjhO3h8] with tumblnail=[/home/ermolaev/Pictures/thumbnails/8/7hbGu23Gc0D]
+11:43:15.404 convertImage ▶ INFO IMAGE: Sharpen: 0.200000; Brightness: 1.000000; Contrast: 1.000000; Gamma 1.000000;
+11:43:15.464 convertThumbnail ▶ INFO THUMBNAIL: Sharpen: 1.200000; Brightness: 3.000000; Contrast: 1.000000; Gamma 1.100000;
+11:43:15.484 uploadImageHandler ▶ INFO Uploaded image=[/home/ermolaev/Pictures/images/x/Yh10HkKCAV] with tumblnail=[/home/ermolaev/Pictures/thumbnails/D/ahd8ibPMHMn]
+ils/V/khNxTX5sA.jpg]

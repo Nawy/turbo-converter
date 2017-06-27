@@ -8,7 +8,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-type resizePoint struct {
+type ResizePoint struct {
 	Width  int
 	Height int
 }
@@ -16,7 +16,7 @@ type resizePoint struct {
 func resizeImage(sourceImage image.Image, maxWidth, maxHeight int, imageType Type) *image.NRGBA {
 	width := sourceImage.Bounds().Dx()
 	height := sourceImage.Bounds().Dy()
-	resizeValue := resizePoint{0, 0}
+	resizeValue := ResizePoint{0, 0}
 
 	if width > height {
 		if width > maxWidth {
@@ -159,6 +159,27 @@ func getFilterByType(value string) imaging.ResampleFilter {
 	default:
 		return imaging.Lanczos
 	}
+}
+
+func isGraphics(inputImage image.Image) bool {
+
+	pixels := make(map[uint32]bool)
+	for x := 0; x <= inputImage.Bounds().Dx(); x++ {
+		for y := 0; y < inputImage.Bounds().Dy(); y++ {
+			r, g, b, _ := inputImage.At(x, y).RGBA()
+			key := ((r*1000)+g)*1000 + b
+			pixels[uint32(key)] = true
+		}
+	}
+
+	length := len(pixels)
+	size := inputImage.Bounds().Dx() * inputImage.Bounds().Dy()
+	ratio := float32(length) / (float32(size) / 100.0)
+
+	if ratio <= 1.5 {
+		return true
+	}
+	return false
 }
 
 func isNeedScale(img image.Image, maxWidth, maxHeight int) bool {

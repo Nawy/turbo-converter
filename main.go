@@ -19,9 +19,9 @@ const (
 	THUMBNAIL = Type(2)
 )
 
-var conf appconfig
+var conf AppConfigYAML
 
-type appconfig struct {
+type AppConfigYAML struct {
 	Port  string `yaml:"port"`
 	Salt  string `yaml:"salt"`
 	Image struct {
@@ -61,7 +61,7 @@ type appconfig struct {
 	}
 }
 
-func loadAppConfig(confPath string, conf *appconfig) *appconfig {
+func loadAppConfig(confPath string, conf *AppConfigYAML) *AppConfigYAML {
 	yamlFile, err := ioutil.ReadFile(confPath)
 	if err != nil {
 		panic("Not found config.yaml")
@@ -93,7 +93,6 @@ func main() {
 	http.HandleFunc("/upload", uploadImageHandler)
 	http.HandleFunc("/delete", deleteImageHandler)
 	http.HandleFunc("/status", statusHandler)
-	http.HandleFunc("/check", checkGraphics)
 
 	fmt.Println("image-converter started on port ", conf.Port)
 	http.ListenAndServe(conf.Port, nil)
