@@ -1,4 +1,4 @@
-port: ":8089"
+port: 8089
 salt: "Holly"
 
 image:
@@ -31,4 +31,3 @@ thumbnail:
 
 logging:
   path: "test.log"
-  format: "%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{message}"
